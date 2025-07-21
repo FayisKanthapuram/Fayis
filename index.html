@@ -436,43 +436,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 			</div>    
 			<div class="contact-right-w3l">
 				<div class="contact-form">
-					<form id="submit-form" action="">
-						<input 
-							placeholder="NAME" 
-							name="FirstName" 
-							type="text" 
-							required 
-							pattern="^[A-Za-z]{2,30}$" 
-							title="First name should be 2–30 alphabetic characters" 
-						/>
-
-						<input 
-							placeholder="LASTNAME" 
-							name="LastName" 
-							type="text" 
-							required 
-							pattern="^[A-Za-z]{2,30}$" 
-							title="Last name should be 2–30 alphabetic characters" 
-						/>
-
-						<input 
-							placeholder="E-MAIL" 
-							name="Email" 
-							type="email" 
-							required 
-							pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
-							title="Enter a valid email address" 
-						/>
-
-						<textarea 
-							placeholder="TYPE YOUR MESSAGE......" 
-							name="Message" 
-							required 
-							minlength="10" 
-							title="Message should be at least 10 characters"
-						></textarea>
-
-						<input type="submit" value="Submit">
+					<form id="contact-form">
+						<input placeholder="NAME" name="first_name" type="text" required="" id="first_name"/>
+						<input placeholder="LASTNAME" name="last_name" type="text" required="" id="last_name"/>
+						<input placeholder="E-MAIL" name="email_id" type="email" required="" id="email_id"/>
+						<textarea placeholder="TYPE YOUR MESSAGE......" required="" name="message" id="message"></textarea>
+						<input type="submit" value="Submit" >
 					</form>
 				</div> 
 			</div> 
@@ -608,35 +577,56 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 <!-- //Custom-JavaScript-Files -->
 
 		
+	<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+	<script>
+		// Initialize EmailJS
+		emailjs.init("20hFkgOiwdm2qTgrp");
 
-		<script>
-			document.getElementById('submit-form').addEventListener('submit', function(e) {
-				e.preventDefault(); // Always prevent form submission by default
+		// Form submit listener
+		document.getElementById("contact-form").addEventListener("submit", function (e) {
+			e.preventDefault();
 
-				const emailInput = document.querySelector('input[name="Email"]');
-				const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+			// Get field values
+			const name = document.getElementById("first_name").value.trim();
+			const email = document.getElementById("email_id").value.trim();
+			const lastname = document.getElementById("last_name").value.trim();
+			const message = document.getElementById("message").value.trim();
 
-				if (!emailRegex.test(emailInput.value)) {
-					alert("❌ Please enter a valid email.");
-					return; // Exit function
-				}
+			// Email RegEx
+			const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[A-Za-z]{2,}$/;
 
-				// ✅ If valid, send AJAX request
-				$.ajax({
-					url: "https://script.google.com/macros/s/AKfycbzVQMWKlciUs8RgfZE7ixLVNopZkqO0ad3my3HdR4SySgqc__TBl7P-huMw-jtGfsg/exec",
-					data: $("#submit-form").serialize(),
-					method: "post",
-					success: function(response) {
-						alert("✅ Form submitted successfully!");
-						window.location.reload();
-						// Or redirect: window.location.href = "thank-you.html";
-					},
-					error: function(err) {
-						alert("❌ Something went wrong. Please try again.");
-					}
-				});
+			// Validations
+			if (name === "") {
+				alert("❌ Name cannot be empty.");
+				return;
+			}
+
+			if (!emailRegex.test(email)) {
+				alert("❌ Please enter a valid email address.");
+				return;
+			}
+
+			if (lastname === "") {
+				alert("❌ Last Name cannot be empty.");
+				return;
+			}
+
+			if (message === "") {
+				alert("❌ Message cannot be empty.");
+				return;
+			}
+
+		// ✅ If all valid, send with EmailJS
+		emailjs.sendForm("service_dn3zmyq", "template_w7a9kks", this)
+			.then(() => {
+				alert("✅ Message sent successfully!");
+				document.getElementById("contact-form").reset();
+			}, (error) => {
+				alert("❌ Failed to send message.");
+				console.error("EmailJS Error:", error);
 			});
-		</script>
+		});
+	</script>
 
 
 </body>
